@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   build:
-
+    name: "Selenium tester"
     runs-on: ubuntu-latest
 
     steps:
