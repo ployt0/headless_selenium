@@ -11,12 +11,9 @@ from selenium.webdriver.firefox.service import Service
 
 @pytest.fixture
 def driver():
-    """
-    todo This'll need adjusting per user to run locally.
-    :return:
-    """
     opts = FirefoxOptions()
     if os.name == 'nt':
+        # todo This'll need adjusting per user to run locally.
         # Hardcode your firefox path here. like "AppData\Local\Mozilla Firefox\firefox.exe".
         # I don't know what shell you use in Windows.
         opts.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
