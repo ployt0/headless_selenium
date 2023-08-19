@@ -35,7 +35,9 @@ jobs:
     - name: Set the variables
       env:
         DEFAULT_VERSION: '3.11'
-      run: echo "PY_VERS=${{ github.event.inputs.python_version || env.DEFAULT_VERSION }}" >> $GITHUB_ENV
+      run: |
+        echo "PY_VERS=${{ github.event.inputs.python_version || env.DEFAULT_VERSION }}" >> $GITHUB_ENV
+        echo "ARCHIVE_DT=$(date +%Y%m%d_%H%M)" >> $GITHUB_ENV
 
     - name: Set up Python ${{ env.PY_VERS }}
       uses: actions/setup-python@v3
@@ -69,3 +71,14 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+
+    - name: Browse site
+      run: |
+        python tests/cap_site.py ${{ env.ARCHIVE_DT }}
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: front-page-${{ env.ARCHIVE_DT }}
+        path: ${{ env.ARCHIVE_DT }}
+
