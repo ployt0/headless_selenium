@@ -1,9 +1,8 @@
-import datetime
 import os
 import io
 import sys
+import time
 
-import pytest
 from pathlib import Path
 
 from selenium import webdriver
@@ -12,18 +11,12 @@ from PIL import Image
 # Use the following lot for headless environments:
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.service import Service
 
 
 def get_driver():
     opts = FirefoxOptions()
     if os.name == 'nt':
-        # todo This'll need adjusting per user to run locally.
-        # Hardcode your firefox path here. like "AppData\Local\Mozilla Firefox\firefox.exe".
-        # I don't know what shell you use in Windows.
-        opts.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
-        service = Service(r"C:\geckodriver.exe")  # Or wherever you keep it.
-        driver = webdriver.Firefox(service=service, options=opts)
+        driver = webdriver.Firefox(options=opts)
     else:
         opts.add_argument("--headless")
         driver = webdriver.Firefox(options=opts)
@@ -43,13 +36,16 @@ def browse(driver, archive_dir: str):
 
     Path(archive_dir).mkdir(parents=True, exist_ok=True)
     screencap(driver, f"{archive_dir}/homepage.webp")
-    for artic in articles:
-        print(artic.text)
+    hrefs = [x.get_attribute("href") for x in articles]
+    titles = [x.text for x in articles]
 
-    for artic in articles:
-        print(f"Getting {artic.href}")
-        driver.get(artic.href)
-        save_name = artic.href.split("/")[-1].replace(".md", ".webp")
+    for href, title in zip(hrefs, titles):
+        print(title)
+        print(f"Getting {href}")
+        driver.get(href)
+        # Try and not get Fail2Banned
+        time.sleep(10)
+        save_name = href.split("/")[-1] + ".webp"
         screencap(driver, f"{archive_dir}/{save_name}")
 
 
