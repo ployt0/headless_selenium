@@ -1,28 +1,13 @@
-import os
 import pytest
-
-from selenium import webdriver
-
 # Use the following lot for headless environments:
-from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.service import Service
+
+from cap_site import get_driver
 
 
 @pytest.fixture
 def driver():
-    opts = FirefoxOptions()
-    if os.name == 'nt':
-        # todo This'll need adjusting per user to run locally.
-        # Hardcode your firefox path here. like "AppData\Local\Mozilla Firefox\firefox.exe".
-        # I don't know what shell you use in Windows.
-        opts.binary_location = r"C:\Program Files\Mozilla Firefox\firefox.exe"
-        service = Service(r"C:\geckodriver.exe")  # Or wherever you keep it.
-        driver = webdriver.Firefox(service=service, options=opts)
-    else:
-        opts.add_argument("--headless")
-        driver = webdriver.Firefox(options=opts)
-    return driver
+    return get_driver()
 
 
 def test_site(driver):
